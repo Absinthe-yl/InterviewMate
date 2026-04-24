@@ -7,17 +7,19 @@
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="nickname" property="nickname"/>
+        <result column="role" property="role"/>
+        <result column="status" property="status"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, username, password, nickname, created_at, updated_at
+        id, username, password, nickname, role, status, created_at, updated_at
     </sql>
 
     <insert id="insert" parameterType="org.interviewmate.entity.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user (username, password, nickname, created_at, updated_at)
-        VALUES (#{username}, #{password}, #{nickname}, NOW(), NOW())
+        INSERT INTO user (username, password, nickname, role, status, created_at, updated_at)
+        VALUES (#{username}, #{password}, #{nickname}, #{role}, #{status}, NOW(), NOW())
     </insert>
 
     <select id="findByUsername" resultMap="BaseResultMap">
@@ -37,9 +39,29 @@
         <set>
             <if test="nickname != null">nickname = #{nickname},</if>
             <if test="password != null">password = #{password},</if>
+            <if test="status != null">status = #{status},</if>
             updated_at = NOW()
         </set>
         WHERE id = #{id}
     </update>
+
+    <update id="updateStatus">
+        UPDATE user
+        SET status = #{status}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM user
+        WHERE status = #{status}
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM user
+        ORDER BY created_at DESC
+    </select>
 
 </mapper>

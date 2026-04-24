@@ -3,7 +3,18 @@
     <div class="register-box">
       <h1>InterviewMate</h1>
       <h2>注册</h2>
-      <form @submit.prevent="handleRegister">
+
+      <!-- 注册成功提示 -->
+      <div v-if="success" class="success-box">
+        <div class="success-icon">✓</div>
+        <h3>注册信息已提交</h3>
+        <p>请等待管理员审核</p>
+        <p class="tip">审核通过后您将可以正常登录</p>
+        <button @click="goToLogin" class="success-btn">返回登录</button>
+      </div>
+
+      <!-- 注册表单 -->
+      <form v-else @submit.prevent="handleRegister">
         <div class="form-group">
           <label>用户名</label>
           <input v-model="form.username" type="text" placeholder="请输入用户名(3-50字符)" required minlength="3" maxlength="50" />
@@ -18,10 +29,11 @@
         </div>
         <div v-if="error" class="error">{{ error }}</div>
         <button type="submit" :disabled="loading">
-          {{ loading ? '注册中...' : '注册' }}
+          {{ loading ? '提交中...' : '提交注册' }}
         </button>
       </form>
-      <p class="link">
+
+      <p v-if="!success" class="link">
         已有账号？<router-link to="/login">登录</router-link>
       </p>
     </div>
@@ -42,6 +54,7 @@ const form = ref({
 })
 const error = ref('')
 const loading = ref(false)
+const success = ref(false)
 
 async function handleRegister() {
   error.value = ''
@@ -49,12 +62,16 @@ async function handleRegister() {
 
   try {
     await register(form.value)
-    router.push('/login')
+    success.value = true
   } catch (e) {
     error.value = e.message || '注册失败'
   } finally {
     loading.value = false
   }
+}
+
+function goToLogin() {
+  router.push('/login')
 }
 </script>
 
@@ -144,5 +161,44 @@ button:disabled {
 
 .link a {
   color: #667eea;
+}
+
+/* 成功提示样式 */
+.success-box {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background: #27ae60;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin: 0 auto 20px;
+}
+
+.success-box h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.success-box p {
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.success-box .tip {
+  color: #999;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.success-btn {
+  margin-top: 10px;
 }
 </style>

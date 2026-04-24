@@ -4,6 +4,8 @@
       <h1>InterviewMate</h1>
       <div class="user-info">
         <span>{{ userInfo?.nickname || userInfo?.username }}</span>
+        <span v-if="isAdmin" class="role-tag">管理员</span>
+        <button v-if="isAdmin" class="admin-btn" @click="goToAdmin">管理后台</button>
         <button @click="handleLogout">退出</button>
       </div>
     </header>
@@ -41,6 +43,7 @@ import { useUserStore } from '@/stores/user'
 const router = useRouter()
 const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
+const isAdmin = computed(() => userInfo.value?.role === 'ADMIN')
 
 onMounted(() => {
   userStore.fetchUserInfo()
@@ -49,6 +52,10 @@ onMounted(() => {
 async function handleLogout() {
   await userStore.logout()
   router.push('/login')
+}
+
+function goToAdmin() {
+  router.push('/admin')
 }
 </script>
 
@@ -76,7 +83,27 @@ async function handleLogout() {
   gap: 15px;
 }
 
-.user-info button {
+.role-tag {
+  padding: 4px 12px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.admin-btn {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.admin-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.user-info button:not(.admin-btn) {
   padding: 8px 16px;
   background: white;
   color: #667eea;

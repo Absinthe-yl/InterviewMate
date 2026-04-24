@@ -47,7 +47,15 @@ async function handleLogin() {
     await userStore.login(form.value.username, form.value.password)
     router.push('/')
   } catch (e) {
-    error.value = e.message || '登录失败'
+    // 处理不同类型的错误
+    const message = e.message || '登录失败'
+    if (message.includes('待审核')) {
+      error.value = '账号待审核，请等待管理员审批'
+    } else if (message.includes('被拒绝')) {
+      error.value = '账号申请已被拒绝，请联系管理员'
+    } else {
+      error.value = message
+    }
   } finally {
     loading.value = false
   }
