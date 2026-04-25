@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.interviewmate.mapper.KnowledgeMapper">
+
+    <resultMap id="BaseResultMap" type="org.interviewmate.entity.Knowledge">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="summary" property="summary"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="tags" property="tags"/>
+        <result column="file_name" property="fileName"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="status" property="status"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, title, content, summary, category_id, tags, file_name, view_count, status, created_by, created_at, updated_at
+    </sql>
+
+    <sql id="List_Column_List">
+        id, title, summary, category_id, tags, view_count, created_at
+    </sql>
+
+    <insert id="insert" parameterType="org.interviewmate.entity.Knowledge" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO knowledge (title, content, summary, category_id, tags, file_name, view_count, status, created_by, created_at, updated_at)
+        VALUES (#{title}, #{content}, #{summary}, #{categoryId}, #{tags}, #{fileName}, 0, 1, #{createdBy}, NOW(), NOW())
+    </insert>
+
+    <update id="updateById" parameterType="org.interviewmate.entity.Knowledge">
+        UPDATE knowledge
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="tags != null">tags = #{tags},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM knowledge WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByIds">
+        DELETE FROM knowledge WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM knowledge
+    </delete>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM knowledge
+        WHERE id = #{id} AND status = 1
+    </select>
+
+    <select id="search" resultMap="BaseResultMap">
+        SELECT <include refid="List_Column_List"/>
+        FROM knowledge
+        WHERE status = 1
+        <if test="keyword != null and keyword != ''">
+            AND (title LIKE CONCAT('%', #{keyword}, '%') OR summary LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+        ORDER BY view_count DESC, created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*)
+        FROM knowledge
+        WHERE status = 1
+        <if test="keyword != null and keyword != ''">
+            AND (title LIKE CONCAT('%', #{keyword}, '%') OR summary LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+    </select>
+
+    <select id="suggest" resultType="string">
+        SELECT title
+        FROM knowledge
+        WHERE status = 1 AND title LIKE CONCAT(#{keyword}, '%')
+        ORDER BY view_count DESC
+        LIMIT 10
+    </select>
+
+    <update id="incrementViewCount">
+        UPDATE knowledge SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+</mapper>
