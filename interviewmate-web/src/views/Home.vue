@@ -20,10 +20,10 @@
           <p>AI 模拟真实面试场景，提供即时反馈</p>
           <span class="coming-soon">即将上线</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card clickable" @click="goToKnowledge">
           <h3>知识库</h3>
           <p>八股文、算法、系统设计等知识整理</p>
-          <span class="coming-soon">即将上线</span>
+          <span class="available">点击进入</span>
         </div>
         <div class="feature-card">
           <h3>面试记录</h3>
@@ -56,6 +56,10 @@ async function handleLogout() {
 
 function goToAdmin() {
   router.push('/admin')
+}
+
+function goToKnowledge() {
+  router.push('/knowledge')
 }
 </script>
 
@@ -163,5 +167,23 @@ function goToAdmin() {
   color: #999;
   border-radius: 5px;
   font-size: 12px;
+}
+
+.available {
+  display: inline-block;
+  padding: 5px 10px;
+  background: #667eea;
+  color: white;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.feature-card.clickable {
+  cursor: pointer;
+}
+
+.feature-card.clickable:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 </style>

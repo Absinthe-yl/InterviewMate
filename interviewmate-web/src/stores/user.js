@@ -9,8 +9,11 @@ export const useUserStore = defineStore('user', () => {
 
   async function login(username, password) {
     const res = await loginApi({ username, password })
-    token.value = res.data.token
-    setToken(res.data.token)
+    // loginApi 成功返回时，res 就是 { code: 0, message: "...", data: { token: "..." } }
+    if (res && res.data && res.data.token) {
+      token.value = res.data.token
+      setToken(res.data.token)
+    }
     return res
   }
 

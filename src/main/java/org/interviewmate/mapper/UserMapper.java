@@ -13,6 +13,7 @@ public interface UserMapper {
     User findById(Long id);
     int updateById(User user);
     int updateStatus(@Param("id") Long id, @Param("status") String status);
+    int deleteById(@Param("id") Long id);
     List<User> findByStatus(@Param("status") String status);
     List<User> findAll();
 }

@@ -2,6 +2,7 @@ package org.interviewmate.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.interviewmate.common.exception.BusinessException;
 import org.interviewmate.dto.LoginRequest;
 import org.interviewmate.dto.LoginResponse;
 import org.interviewmate.dto.RegisterRequest;
@@ -31,15 +32,22 @@ public class AuthServiceImpl implements AuthService {
     public void register(RegisterRequest request) {
         User existingUser = userMapper.findByUsername(request.getUsername());
         if (existingUser != null) {
-            throw new RuntimeException("用户名已存在");
+            // 如果用户状态是 REJECTED，允许重新注册（删除旧记录）
+            if (UserStatus.REJECTED.name().equals(existingUser.getStatus())) {
+                userMapper.deleteById(existingUser.getId());
+            } else if (UserStatus.PENDING.name().equals(existingUser.getStatus())) {
+                throw new BusinessException("用户名已存在，正在等待审核");
+            } else {
+                throw new BusinessException("用户名已存在");
+            }
         }
 
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname() != null ? request.getNickname() : request.getUsername());
-        user.setRole(UserRole.USER.name());
-        user.setStatus(UserStatus.PENDING.name());
+        user.setRole(UserRole.USER.name());  // 普通用户
+        user.setStatus(UserStatus.PENDING.name());  // 需要管理员审核
 
         userMapper.insert(user);
     }
@@ -51,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userMapper.findByUsername(request.getUsername());
         if (user == null) {
             log.error("用户不存在: {}", request.getUsername());
-            throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException("用户名或密码错误");
         }
 
         log.info("查询到用户: id={}, username={}, status={}, role={}", user.getId(), user.getUsername(), user.getStatus(), user.getRole());
@@ -59,11 +67,11 @@ public class AuthServiceImpl implements AuthService {
         // 检查用户状态
         if (UserStatus.PENDING.name().equals(user.getStatus())) {
             log.warn("用户待审核: {}", user.getUsername());
-            throw new RuntimeException("账号待审核，请等待管理员审批");
+            throw new BusinessException("账号待审核，请等待管理员审批");
         }
         if (UserStatus.REJECTED.name().equals(user.getStatus())) {
             log.warn("用户已被拒绝: {}", user.getUsername());
-            throw new RuntimeException("账号申请已被拒绝");
+            throw new BusinessException("账号申请已被拒绝");
         }
 
         // 验证密码
@@ -74,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (!passwordMatches) {
             log.error("密码不匹配");
-            throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException("用户名或密码错误");
         }
 
         String token = jwtUtil.generateToken(user.getId(), user.getUsername());

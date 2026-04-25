@@ -21,6 +21,18 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/knowledge',
+    name: 'Knowledge',
+    component: () => import('@/views/KnowledgeList.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/knowledge/:id',
+    name: 'KnowledgeDetail',
+    component: () => import('@/views/KnowledgeDetail.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/admin',
     name: 'Admin',
     component: () => import('@/views/Admin.vue'),

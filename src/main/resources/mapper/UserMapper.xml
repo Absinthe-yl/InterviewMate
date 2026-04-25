@@ -51,6 +51,10 @@
         WHERE id = #{id}
     </update>
 
+    <delete id="deleteById">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
     <select id="findByStatus" resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM user
