@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.interviewmate.mapper.PromptTemplateMapper">
+
+    <resultMap id="BaseResultMap" type="org.interviewmate.entity.PromptTemplate">
+        <id column="id" property="id"/>
+        <result column="template_key" property="templateKey"/>
+        <result column="template_name" property="templateName"/>
+        <result column="template_content" property="templateContent"/>
+        <result column="description" property="description"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, template_key, template_name, template_content, description, updated_at
+    </sql>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM prompt_template
+        ORDER BY id ASC
+    </select>
+
+    <select id="findByKey" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM prompt_template
+        WHERE template_key = #{templateKey}
+    </select>
+
+    <update id="updateByKey" parameterType="org.interviewmate.entity.PromptTemplate">
+        UPDATE prompt_template
+        SET template_content = #{templateContent},
+            updated_at = NOW()
+        WHERE template_key = #{templateKey}
+    </update>
+
+</mapper>

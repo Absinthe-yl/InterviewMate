@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.interviewmate.mapper.InterviewSessionMapper">
+
+    <resultMap id="BaseResultMap" type="org.interviewmate.entity.InterviewSession">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="resume_file_name" property="resumeFileName"/>
+        <result column="resume_data" property="resumeData"/>
+        <result column="position_type" property="positionType"/>
+        <result column="interview_type" property="interviewType"/>
+        <result column="difficulty_level" property="difficultyLevel"/>
+        <result column="total_rounds" property="totalRounds"/>
+        <result column="current_round" property="currentRound"/>
+        <result column="status" property="status"/>
+        <result column="total_score" property="totalScore"/>
+        <result column="started_at" property="startedAt"/>
+        <result column="ended_at" property="endedAt"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, resume_file_name, resume_data, position_type, interview_type, difficulty_level,
+        total_rounds, current_round, status, total_score, started_at, ended_at, created_at, updated_at
+    </sql>
+
+    <insert id="insert" parameterType="org.interviewmate.entity.InterviewSession" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO interview_session (user_id, resume_file_name, resume_data, position_type, interview_type, difficulty_level,
+                                       total_rounds, current_round, status, started_at, created_at, updated_at)
+        VALUES (#{userId}, #{resumeFileName}, #{resumeData}, #{positionType}, #{interviewType}, #{difficultyLevel},
+                #{totalRounds}, #{currentRound}, #{status}, #{startedAt}, NOW(), NOW())
+    </insert>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM interview_session
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM interview_session
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+    <update id="updateById" parameterType="org.interviewmate.entity.InterviewSession">
+        UPDATE interview_session
+        <set>
+            <if test="currentRound != null">current_round = #{currentRound},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="endedAt != null">ended_at = #{endedAt},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM interview_session WHERE id = #{id}
+    </delete>
+
+</mapper>

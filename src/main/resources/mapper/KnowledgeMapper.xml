@@ -102,4 +102,19 @@
         UPDATE knowledge SET view_count = view_count + 1 WHERE id = #{id}
     </update>
 
+    <select id="searchByKeywords" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM knowledge
+        WHERE status = 1
+        <if test="keywords != null and keywords.size() > 0">
+            AND (
+                <foreach collection="keywords" item="kw" separator=" OR ">
+                    (title LIKE CONCAT('%', #{kw}, '%') OR summary LIKE CONCAT('%', #{kw}, '%'))
+                </foreach>
+            )
+        </if>
+        ORDER BY view_count DESC
+        LIMIT #{limit}
+    </select>
+
 </mapper>

@@ -33,3 +33,9 @@ ai:
   base-url: https://api.xzzzzz.com
   api-key: sk-gwsAzladZzBRoHKYhNoIzq4HFsjwiANQPS5SWbVY9c9FXO9f
   model: glm-5.1
+
+# 日志配置
+logging:
+  level:
+    org.apache.fontbox: WARN
+    org.apache.pdfbox: WARN

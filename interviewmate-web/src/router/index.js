@@ -37,6 +37,36 @@ const routes = [
     name: 'Admin',
     component: () => import('@/views/Admin.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/interview',
+    name: 'Interview',
+    component: () => import('@/views/InterviewList.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/interview/history',
+    name: 'InterviewHistory',
+    component: () => import('@/views/InterviewHistory.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/interview/start',
+    name: 'InterviewStart',
+    component: () => import('@/views/InterviewStart.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/interview/:id',
+    name: 'InterviewChat',
+    component: () => import('@/views/InterviewChat.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/interview/report/:id',
+    name: 'InterviewReport',
+    component: () => import('@/views/InterviewReport.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

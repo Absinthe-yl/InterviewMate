@@ -15,20 +15,20 @@
         <p>AI 面试模拟平台 - 帮助你更好地准备面试</p>
       </div>
       <div class="features">
-        <div class="feature-card">
+        <div class="feature-card clickable" @click="goToStartInterview">
           <h3>模拟面试</h3>
           <p>AI 模拟真实面试场景，提供即时反馈</p>
-          <span class="coming-soon">即将上线</span>
+          <span class="available">点击进入</span>
         </div>
         <div class="feature-card clickable" @click="goToKnowledge">
           <h3>知识库</h3>
           <p>八股文、算法、系统设计等知识整理</p>
           <span class="available">点击进入</span>
         </div>
-        <div class="feature-card">
+        <div class="feature-card clickable" @click="goToHistory">
           <h3>面试记录</h3>
           <p>记录每次模拟面试，追踪学习进度</p>
-          <span class="coming-soon">即将上线</span>
+          <span class="available">点击进入</span>
         </div>
       </div>
     </main>
@@ -60,6 +60,14 @@ function goToAdmin() {
 
 function goToKnowledge() {
   router.push('/knowledge')
+}
+
+function goToStartInterview() {
+  router.push('/interview/start')
+}
+
+function goToHistory() {
+  router.push('/interview/history')
 }
 </script>
 

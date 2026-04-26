@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.interviewmate.mapper.InterviewRoundMapper">
+
+    <resultMap id="BaseResultMap" type="org.interviewmate.entity.InterviewRound">
+        <id column="id" property="id"/>
+        <result column="session_id" property="sessionId"/>
+        <result column="round_number" property="roundNumber"/>
+        <result column="question_category" property="questionCategory"/>
+        <result column="question" property="question"/>
+        <result column="user_answer" property="userAnswer"/>
+        <result column="ai_evaluation" property="aiEvaluation"/>
+        <result column="score" property="score"/>
+        <result column="feedback" property="feedback"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, session_id, round_number, question_category, question, user_answer,
+        ai_evaluation, score, feedback, status, created_at
+    </sql>
+
+    <insert id="insert" parameterType="org.interviewmate.entity.InterviewRound" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO interview_round (session_id, round_number, question_category, question, status, created_at)
+        VALUES (#{sessionId}, #{roundNumber}, #{questionCategory}, #{question}, #{status}, NOW())
+    </insert>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM interview_round
+        WHERE id = #{id}
+    </select>
+
+    <select id="findBySessionId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM interview_round
+        WHERE session_id = #{sessionId}
+        ORDER BY round_number ASC
+    </select>
+
+    <update id="updateById" parameterType="org.interviewmate.entity.InterviewRound">
+        UPDATE interview_round
+        <set>
+            <if test="userAnswer != null">user_answer = #{userAnswer},</if>
+            <if test="aiEvaluation != null">ai_evaluation = #{aiEvaluation},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="feedback != null">feedback = #{feedback},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteBySessionId">
+        DELETE FROM interview_round WHERE session_id = #{sessionId}
+    </delete>
+
+</mapper>

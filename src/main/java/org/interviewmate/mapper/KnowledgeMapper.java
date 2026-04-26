@@ -18,4 +18,5 @@ public interface KnowledgeMapper {
     int count(@Param("keyword") String keyword, @Param("categoryId") Long categoryId);
     List<String> suggest(@Param("keyword") String keyword);
     int incrementViewCount(Long id);
+    List<Knowledge> searchByKeywords(@Param("keywords") List<String> keywords, @Param("limit") int limit);
 }
